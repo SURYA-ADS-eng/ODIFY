@@ -1,7 +1,9 @@
 // src/pages/FacultyDashboard.jsx
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";   // <-- added for navigation
 
 export default function FacultyDashboard() {
+  const navigate = useNavigate(); // <-- added navigation hook
   const token = localStorage.getItem("token");
 
   // Departments
@@ -18,7 +20,7 @@ export default function FacultyDashboard() {
   const [remarks, setRemarks] = useState("");
   const [search, setSearch] = useState("");
 
-  const BASE = "http://localhost:5000/api/requests";   // your actual backend route
+  const BASE = `http://localhost:5000/api/requests`;   // backend route
 
   useEffect(() => {
     loadAll();
@@ -33,7 +35,7 @@ export default function FacultyDashboard() {
   // ---------- TODAY STATS ----------
   const fetchTodayStats = async () => {
     try {
-      const res = await fetch("${BASE}/faculty/today-stats?dept=${dept}", {
+      const res = await fetch(`${BASE}/faculty/today-stats?dept=${dept}`, {
         headers: { "x-auth-token": token },
       });
       const data = await res.json();
@@ -46,7 +48,7 @@ export default function FacultyDashboard() {
   // ---------- MONTH STATS ----------
   const fetchMonthStats = async () => {
     try {
-      const res = await fetch("${BASE}/faculty/month-stats?dept=${dept}", {
+      const res = await fetch(`${BASE}/faculty/month-stats?dept=${dept}`, {
         headers: { "x-auth-token": token },
       });
       const data = await res.json();
@@ -60,7 +62,7 @@ export default function FacultyDashboard() {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetch("${BASE}/faculty/requests?dept=${dept}", {
+      const res = await fetch(`${BASE}/faculty/requests?dept=${dept}`, {
         headers: { "x-auth-token": token },
       });
       const data = await res.json();
@@ -108,7 +110,7 @@ export default function FacultyDashboard() {
   // ---------- PROOF VIEW ----------
   const viewProof = (file) => {
     if (!file) return alert("No proof uploaded");
-    window.open("http://localhost:5000/${file}", "_blank");
+    window.open(`http://localhost:5000/${file}`, "_blank");
   };
 
   // ---------- SEARCH FILTER ----------
@@ -153,6 +155,23 @@ export default function FacultyDashboard() {
   return (
     <div style={styles.container}>
       <div style={styles.title}>Faculty Dashboard</div>
+
+      {/* 🔵 NEW BUTTON ADDED HERE */}
+      <button
+        style={{
+          padding: "10px 20px",
+          marginBottom: 15,
+          background: "#0066ff",
+          color: "white",
+          borderRadius: 6,
+          border: "none",
+          cursor: "pointer",
+        }}
+        onClick={() => navigate("/faculty")}
+      >
+        Go to Faculty Approval Page
+      </button>
+      {/* 🔵 END */}
 
       {/* FILTERS */}
       <div style={styles.row}>

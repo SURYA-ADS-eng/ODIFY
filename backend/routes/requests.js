@@ -12,7 +12,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ⭐ STUDENT submits OD request
+/* ======================================================
+    ⭐ STUDENT submits OD request
+====================================================== */
 router.post("/submit", auth, upload.single("proofFile"), async (req, res) => {
   try {
     const od = new OD({
@@ -30,22 +32,46 @@ router.post("/submit", auth, upload.single("proofFile"), async (req, res) => {
   }
 });
 
-// ⭐ FACULTY DASHBOARD DATA — only faculty/hod/admin
+/* ======================================================
+    ⭐ FACULTY PENDING REQUESTS (for FacultyApproval page)
+====================================================== */
 router.get(
-  "/faculty/dashboard",
+  "/pending",
+  auth,
+  roleCheck(["faculty", "hod", "admin"]),
+  async (req, res) => {
+    const list = await OD.find({ status: "Pending" })
+      .populate("student", "name regNo dept year");
+    res.json(list);
+  }
+);
+
+/* ======================================================
+    ⭐ FACULTY DASHBOARD — TODAY STATS
+====================================================== */
+router.get(
+  "/faculty/today-stats",
   auth,
   roleCheck(["faculty", "hod", "admin"]),
   async (req, res) => {
     try {
-      const requests = await OD.find({ facultyInCharge: req.user.id }).populate(
-        "student",
-        "name regNo dept year"
-      );
+      const dept = req.query.dept;
 
-      res.json({
-        count: requests.length,
-        requests,
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+
+      // Filter directly by dept (your model stores dept inside OD, NOT inside student)
+      const requests = await OD.find({
+        startDate: { $gte: start },
+        dept: dept
       });
+
+      const approved = requests.filter(r => r.status === "Approved").length;
+      const rejected = requests.filter(r => r.status === "Rejected").length;
+      const pending = requests.filter(r => r.status === "Pending").length;
+
+      res.json({ approved, rejected, pending });
+
     } catch (err) {
       console.log(err);
       res.status(500).send("Server error");
@@ -53,21 +79,68 @@ router.get(
   }
 );
 
-// ⭐ FACULTY sees pending ODs
+/* ======================================================
+    ⭐ FACULTY DASHBOARD — MONTH STATS
+====================================================== */
 router.get(
-  "/pending",
+  "/faculty/month-stats",
   auth,
   roleCheck(["faculty", "hod", "admin"]),
   async (req, res) => {
-    const list = await OD.find({ status: "Pending" });
-    res.json(list);
+    try {
+      const dept = req.query.dept;
+
+      const start = new Date();
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+
+      const requests = await OD.find({
+        startDate: { $gte: start },
+        dept: dept
+      });
+
+      const total = requests.length;
+      const approved = requests.filter(r => r.status === "Approved").length;
+      const rejected = requests.filter(r => r.status === "Rejected").length;
+      const pending = requests.filter(r => r.status === "Pending").length;
+
+      res.json({ total, approved, rejected, pending });
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server error");
+    }
   }
 );
 
-// ⭐ STUDENT VIEWS OWN ODs
+/* ======================================================
+    ⭐ FACULTY DASHBOARD — LIST OF OD REQUESTS (Table)
+====================================================== */
+router.get(
+  "/faculty/requests",
+  auth,
+  roleCheck(["faculty", "hod", "admin"]),
+  async (req, res) => {
+    try {
+      const dept = req.query.dept;
+
+      const list = await OD.find({ dept: dept })
+        .populate("student", "name regNo dept year")
+        .sort({ createdAt: -1 });
+
+      res.json(list);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+/* ======================================================
+    ⭐ STUDENT VIEWS OWN ODs
+====================================================== */
 router.get("/student/:id", auth, async (req, res) => {
   try {
-    // student can only view their own OR faculty/hod/admin can view
     if (
       req.user.id !== req.params.id &&
       !["faculty", "hod", "admin"].includes(req.user.role)
@@ -83,7 +156,9 @@ router.get("/student/:id", auth, async (req, res) => {
   }
 });
 
-// ⭐ FACULTY APPROVE/REJECT
+/* ======================================================
+    ⭐ FACULTY APPROVE/REJECT OD REQUEST
+====================================================== */
 router.post(
   "/:id/decision",
   auth,
@@ -104,7 +179,9 @@ router.post(
   }
 );
 
-// ⭐ STUDENT upload post-event certificate
+/* ======================================================
+    ⭐ STUDENT uploads Post-Event Proof
+====================================================== */
 router.post(
   "/:id/postproof",
   auth,
