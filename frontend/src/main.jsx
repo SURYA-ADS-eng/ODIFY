@@ -9,10 +9,10 @@ import FacultyApproval from "./pages/FacultyApproval.jsx";
 import FacultyDashboard from "./pages/FacultyDashboard.jsx";
 
 import ODStatus from "./pages/ODStatus.jsx";
-import AdminDash from "./pages/AdminDash"; 
-   // 👈 Add this
-
-
+import AdminDash from "./pages/AdminDash";
+// 👈 Add this
+import CertificateUpload from "./pages/CertificateUpload.jsx";
+import FacultyCertificateView from "./pages/FacultyCertificateView.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -23,6 +23,19 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Route path="/student" element={<Dashboard />} />
       <Route path="/apply-od" element={<ApplyOD />} />
       <Route path="/faculty" element={<FacultyApproval />} />
+      <Route path="/studentDash" element={<ODStatus />} />
+      {/* student */}
+      <Route path="/upload-certificate" element={<CertificateUpload />} />
+      <Route
+        path="/faculty/certificates/:id"
+        element={<FacultyCertificateView />}
+      />
+      {/* faculty */}
+      <Route
+        path="/faculty/certificates"
+        element={<FacultyCertificateView />}
+      />{" "}
+      <Route path="/adminDash" element={<AdminDash />} />
       <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
 
 
@@ -31,5 +44,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       
 
     </Routes>
-  </BrowserRouter>
+  </BrowserRouter>,
 );
+

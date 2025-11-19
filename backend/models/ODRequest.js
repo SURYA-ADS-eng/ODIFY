@@ -1,30 +1,33 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const ODRequestSchema = new mongoose.Schema({
-  student: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  studentName: String,
-  regNo: String,
-  dept: String,
-  year: String,
+const ODRequestSchema = new mongoose.Schema(
+  {
+    student: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    studentName: String,
+    regNo: String,
+    dept: String,
+    year: String,
 
-  eventName: String,
-  organizer: String,
-  eventType: String,
+    eventName: String,
+    organizer: String,
+    eventType: String,
 
-  startDate: Date,
-  endDate: Date,
+    startDate: Date,
+    endDate: Date,
 
-  proofFile: String,
-  postEventProof: String,
+    proofFile: String,
+    postEventProof: String,
 
-  facultyRemarks: String,
-  facultyInCharge: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    facultyRemarks: String,
+    facultyInCharge: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
-  status: {
-    type: String,
-    enum: ['Pending', 'Approved', 'Rejected', 'ProofPending', 'Verified'],
-    default: 'Pending'
-  }
-}, { timestamps: true });
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected", "ProofPending", "Verified"],
+      default: "Pending",
+    },
+  },
+  { timestamps: true },
+);
 
-module.exports = mongoose.model('ODRequest', ODRequestSchema);
+module.exports = mongoose.model("ODRequest", ODRequestSchema);

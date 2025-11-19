@@ -8,7 +8,6 @@ export default function Dashboard() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-
         {/* 🔹 View OD Status Button at TOP */}
         <button
           style={styles.topButton}
@@ -24,13 +23,18 @@ export default function Dashboard() {
         <p>Year: {user.year}</p>
 
         {/* Apply OD */}
-        <button
-          style={styles.button}
-          onClick={() => navigate("/apply-od")}
-        >
+        <button style={styles.button} onClick={() => navigate("/apply-od")}>
           Apply for OD
         </button>
-
+        <button
+          style={{
+            ...styles.button,
+            background: "#6f42c1", // purple just to differentiate
+          }}
+          onClick={() => navigate("/upload-certificate")}
+        >
+          Apply Attendance
+        </button>
         {/* Logout */}
         <button
           style={styles.logout}
@@ -41,7 +45,6 @@ export default function Dashboard() {
         >
           Logout
         </button>
-
       </div>
     </div>
   );

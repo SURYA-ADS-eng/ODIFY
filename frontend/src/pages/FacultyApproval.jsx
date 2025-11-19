@@ -14,17 +14,23 @@ export default function FacultyApproval() {
   const fetchPending = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/requests/pending", {
-        headers: { "x-auth-token": token },
-      });
+      const res = await axios.get(
+        "http://localhost:5000/api/requests/pending",
+        {
+          headers: { "x-auth-token": token },
+        },
+      );
 
       // res.data is array, no extra fields
       console.log("Pending requests", res.data);
       setRequests(res.data);
-      
     } catch (err) {
       console.error("Fetch pending error:", err);
+
+      // alert("Error fetching pending requests");
+
       //alert("Error fetching pending requests");
+
     } finally {
       setLoading(false);
     }
@@ -37,13 +43,12 @@ export default function FacultyApproval() {
       const res = await axios.post(
         "http://localhost:5000/api/requests/${id}/decision",
         { action, remarks },
-        { headers: { "x-auth-token": token } }
+        { headers: { "x-auth-token": token } },
       );
 
       alert(`Request ${action}`);
 
       setRequests((prev) => prev.filter((r) => r._id !== id));
-      
     } catch (err) {
       console.error("Decision error:", err);
       alert("Failed to update request.");
@@ -68,20 +73,28 @@ export default function FacultyApproval() {
         ) : (
           requests.map((r) => (
             <div key={r._id} style={styles.reqCard}>
-
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
                   <h3 style={{ margin: 0 }}>{r.eventName}</h3>
 
-                  <p><strong>Student:</strong> {r.student?.name || r.studentName}</p>
-                  <p><strong>Reg No:</strong> {r.student?.regNo || r.regNo}</p>
-                  <p><strong>Dept:</strong> {r.student?.dept || r.dept}</p>
-                  <p><strong>Year:</strong> {r.student?.year || r.year}</p>
+                  <p>
+                    <strong>Student:</strong> {r.student?.name || r.studentName}
+                  </p>
+                  <p>
+                    <strong>Reg No:</strong> {r.student?.regNo || r.regNo}
+                  </p>
+                  <p>
+                    <strong>Dept:</strong> {r.student?.dept || r.dept}
+                  </p>
+                  <p>
+                    <strong>Year:</strong> {r.student?.year || r.year}
+                  </p>
 
                   <p>
                     <strong>Event Type:</strong> {r.eventType} <br />
-                    <strong>Dates:</strong> 
-                    {new Date(r.startDate).toLocaleDateString()} - {new Date(r.endDate).toLocaleDateString()}
+                    <strong>Dates:</strong>
+                    {new Date(r.startDate).toLocaleDateString()} -{" "}
+                    {new Date(r.endDate).toLocaleDateString()}
                   </p>
                 </div>
 
@@ -102,19 +115,37 @@ export default function FacultyApproval() {
               </div>
 
               <div style={styles.actionRow}>
-                <button style={styles.approve} onClick={() => makeDecision(r._id, "Approved")}>
+                <button
+                  style={styles.approve}
+                  onClick={() => makeDecision(r._id, "Approved")}
+                >
                   Approve
                 </button>
-                <button style={styles.reject} onClick={() => makeDecision(r._id, "Rejected")}>
+                <button
+                  style={styles.reject}
+                  onClick={() => makeDecision(r._id, "Rejected")}
+                >
                   Reject
                 </button>
               </div>
-
             </div>
           ))
         )}
-
       </div>
+      <button
+        style={{
+          padding: "10px 16px",
+          background: "#007bff",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginBottom: "20px",
+        }}
+        onClick={() => (window.location.href = "/faculty/certificates")}
+      >
+        View Certificates
+      </button>
     </div>
   );
 }
