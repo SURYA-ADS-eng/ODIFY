@@ -11,7 +11,7 @@ export default function FacultyCertificateView() {
   const loadData = async () => {
     const token = localStorage.getItem("token");
     const res = await axios.get("http://localhost:5000/certificate/all", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { "x-auth-token": token },
     });
     setList(res.data);
   };
@@ -22,9 +22,7 @@ export default function FacultyCertificateView() {
     await axios.post(
       `http://localhost:5000/certificate/${id}/review`,
       {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
+      { headers: { "x-auth-token": token } },
     );
 
     loadData();

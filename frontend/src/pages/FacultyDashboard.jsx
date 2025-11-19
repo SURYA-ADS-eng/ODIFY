@@ -193,7 +193,7 @@ export default function FacultyDashboard() {
           border: "none",
           cursor: "pointer",
         }}
-        onClick={() => navigate("/faculty")}
+        onClick={() => navigate("/faculty/certificates")}
       >
         Go to Faculty Approval Page
       </button>

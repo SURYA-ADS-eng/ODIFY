@@ -20,7 +20,7 @@ export default function CertificateUpload() {
 
     await axios.post("http://localhost:5000/certificate/submit", form, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        "x-auth-token": token,
         "Content-Type": "multipart/form-data",
       },
     });
