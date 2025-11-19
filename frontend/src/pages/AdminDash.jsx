@@ -27,7 +27,7 @@ export default function AdminDash() {
       setAllRequests(res.data || []);
     } catch (err) {
       console.error("Admin fetch error:", err);
-      alert("Failed to load admin dashboard data.");
+     // alert("Failed to load admin dashboard data.");
     } finally {
       setLoading(false);
     }

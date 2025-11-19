@@ -36,9 +36,9 @@ export default function Login() {
       // redirect based on role
       const role = response.data.user.role;
       if (role === "Student") window.location.href = "/student";
-      else if (role === "Faculty") window.location.href = "/faculty";
+      else if (role === "Faculty") window.location.href = "/faculty/dashboard";
       else if (role === "HoD") window.location.href = "/hod";
-      else if (role === "Admin") window.location.href = "/admin";
+      else if (role === "Admin") window.location.href = "/adminDash";
       else window.location.href = "/"; // fallback
 
     } catch (err) {

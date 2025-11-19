@@ -6,6 +6,8 @@ import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ApplyOD from "./pages/ApplyOD.jsx";
 import FacultyApproval from "./pages/FacultyApproval.jsx";
+import FacultyDashboard from "./pages/FacultyDashboard.jsx";
+
 import ODStatus from "./pages/ODStatus.jsx";
 import AdminDash from "./pages/AdminDash";
 // 👈 Add this
@@ -34,6 +36,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         element={<FacultyCertificateView />}
       />{" "}
       <Route path="/adminDash" element={<AdminDash />} />
+      <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+
+
+      <Route path="/studentDash" element={<ODStatus />} />
+      <Route path="/adminDash" element={<AdminDash />} />
+      
+
     </Routes>
   </BrowserRouter>,
 );

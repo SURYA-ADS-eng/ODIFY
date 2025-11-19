@@ -8,9 +8,9 @@ import ApplyOD from "./pages/ApplyOD";
 import ODStatus from "./pages/ODStatus";
 import StudentDash from "./pages/Dashboard";
 import FacultyDashboard from "./pages/FacultyDashboard";
+import AdminDash from "./pages/AdminDash"; 
 
 
-import FacultyApproval from "./pages/FacultyApproval";
 
 export default function App() {
   return (
@@ -23,9 +23,11 @@ export default function App() {
         <Route path="/student" element={<Dashboard />} />
         <Route path="/apply-od" element={<ApplyOD />} />
         <Route path="/studentDash" element={<StudentDash />} />
-      <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+        <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
 
         <Route path="/faculty" element={<FacultyApproval />} />
+        <Route path="/adminDash" element={<AdminDash />} />
+        
 
         <Route path="*" element={<Login />} />
 

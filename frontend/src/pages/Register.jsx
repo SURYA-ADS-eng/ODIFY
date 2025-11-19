@@ -21,7 +21,7 @@ export default function Register() {
 
     // ROLE CHANGE LOGIC
     if (name === "role") {
-      if (value === "Admin") {
+      if (value === "admin") {
         // Admin must NOT select dept or year
         setForm({ ...form, role: value, dept: "", year: "" });
       } 
@@ -101,21 +101,26 @@ export default function Register() {
             name="dept"
             style={{
               ...styles.input,
-              background: form.role === "Admin" ? "#dfe8f7" : "white",
-              cursor: form.role === "Admin" ? "not-allowed" : "pointer",
+              background: form.role === "admin" ? "#dfe8f7" : "white",
+              cursor: form.role === "admin" ? "not-allowed" : "pointer",
             }}
             value={form.dept}
             onChange={handleChange}
-            disabled={form.role === "Admin"}
-            required={form.role !== "Admin"}   // Admin does NOT need dept
+            disabled={form.role === "admin"}
+            required={form.role !== "admin"}   // Admin does NOT need dept
           >
             <option value="">Select Department</option>
-            <option value="AI&DS">AIDS</option>
-            <option value="AI&ML">AML</option>
+            <option value="AI&DS">AI&DS</option>
+            <option value="AI&ML">AI&ML</option>
             <option value="CSE">CSE</option>
             <option value="ECE">ECE</option>
             <option value="EEE">EEE</option>
             <option value="MECH">MECH</option>
+            <option value="BME">BME</option>
+            <option value="MDE">MDE</option>
+            <option value="CIVIL">CIVIL</option>
+
+
           </select>
 
           {/* YEAR - DISABLED IF NOT STUDENT */}
@@ -148,7 +153,7 @@ export default function Register() {
             <option value="Student">Student</option>
             <option value="Faculty">Faculty</option>
             <option value="HoD">HoD</option>
-            <option value="Admin">Admin</option>
+            <option value="admin">Admin</option>
           </select>
 
           {/* GMAIL */}

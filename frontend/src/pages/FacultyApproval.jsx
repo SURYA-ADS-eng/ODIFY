@@ -26,7 +26,11 @@ export default function FacultyApproval() {
       setRequests(res.data);
     } catch (err) {
       console.error("Fetch pending error:", err);
+
       // alert("Error fetching pending requests");
+
+      //alert("Error fetching pending requests");
+
     } finally {
       setLoading(false);
     }
@@ -37,7 +41,7 @@ export default function FacultyApproval() {
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/requests/${id}/decision`,
+        "http://localhost:5000/api/requests/${id}/decision",
         { action, remarks },
         { headers: { "x-auth-token": token } },
       );
