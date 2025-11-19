@@ -33,7 +33,7 @@ export default function Dashboard() {
           }}
           onClick={() => navigate("/upload-certificate")}
         >
-          Apply Attendance
+          Upload Certificates
         </button>
         {/* Logout */}
         <button

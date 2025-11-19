@@ -187,16 +187,31 @@ export default function FacultyDashboard() {
         style={{
           padding: "10px 20px",
           marginBottom: 15,
-          background: "#0066ff",
+          background: "black",
           color: "white",
-          borderRadius: 6,
+          borderRadius: 67,
           border: "none",
           cursor: "pointer",
         }}
         onClick={() => navigate("/faculty/certificates")}
       >
-        Go to Faculty Approval Page
-      </button>
+       Certificate Verification
+      </button> 
+      <button
+        style={{
+          padding: "10px 20px",
+          background: "black",
+          color: "white",
+          borderRadius: 67,
+          border: "none",
+          cursor: "pointer",
+          margin: 15,
+          fontWeight: "bold"
+        }}
+        onClick={() => window.open("http://localhost:5000/api/download/od-excel")}
+      >
+        Download OD Excel Sheet
+      </button>
 
       <div style={styles.row}>
         <select
