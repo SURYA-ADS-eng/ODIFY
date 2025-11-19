@@ -13,7 +13,9 @@ export default function Login() {
 
     // Client-side Gmail validation
     if (!email.toLowerCase().endsWith("@gmail.com")) {
-      setErrorMsg("Email must be a @gmail.com address. If you don't have one, please register.");
+      setErrorMsg(
+        "Email must be a @gmail.com address. If you don't have one, please register.",
+      );
       return;
     }
 
@@ -24,10 +26,13 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email,
+          password,
+        },
+      );
 
       // store user data
       localStorage.setItem("token", response.data.token);
@@ -40,10 +45,11 @@ export default function Login() {
       else if (role === "HoD") window.location.href = "/hod";
       else if (role === "Admin") window.location.href = "/adminDash";
       else window.location.href = "/"; // fallback
-
     } catch (err) {
       // show friendly msg + register link suggestion
-      setErrorMsg("Invalid email or password. If you don't have an account, please register.");
+      setErrorMsg(
+        "Invalid email or password. If you don't have an account, please register.",
+      );
     } finally {
       setLoading(false);
     }

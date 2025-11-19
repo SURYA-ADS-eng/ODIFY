@@ -25,7 +25,6 @@ router.post("/submit", auth, upload.single("proofFile"), async (req, res) => {
 
     await od.save();
     res.json({ msg: "OD Request Submitted", od });
-
   } catch (err) {
     console.log(err);
     res.status(500).send("Server error");
@@ -40,10 +39,12 @@ router.get(
   auth,
   roleCheck(["faculty", "hod", "admin"]),
   async (req, res) => {
-    const list = await OD.find({ status: "Pending" })
-      .populate("student", "name regNo dept year");
+    const list = await OD.find({ status: "Pending" }).populate(
+      "student",
+      "name regNo dept year",
+    );
     res.json(list);
-  }
+  },
 );
 
 /* ======================================================
@@ -63,20 +64,19 @@ router.get(
       // Filter directly by dept (your model stores dept inside OD, NOT inside student)
       const requests = await OD.find({
         startDate: { $gte: start },
-        dept: dept
+        dept: dept,
       });
 
-      const approved = requests.filter(r => r.status === "Approved").length;
-      const rejected = requests.filter(r => r.status === "Rejected").length;
-      const pending = requests.filter(r => r.status === "Pending").length;
+      const approved = requests.filter((r) => r.status === "Approved").length;
+      const rejected = requests.filter((r) => r.status === "Rejected").length;
+      const pending = requests.filter((r) => r.status === "Pending").length;
 
       res.json({ approved, rejected, pending });
-
     } catch (err) {
       console.log(err);
       res.status(500).send("Server error");
     }
-  }
+  },
 );
 
 /* ======================================================
@@ -96,35 +96,32 @@ router.get(
 
       const requests = await OD.find({
         startDate: { $gte: start },
-        dept: dept
+        dept: dept,
       });
 
       const total = requests.length;
-      const approved = requests.filter(r => r.status === "Approved").length;
-      const rejected = requests.filter(r => r.status === "Rejected").length;
-      const pending = requests.filter(r => r.status === "Pending").length;
+      const approved = requests.filter((r) => r.status === "Approved").length;
+      const rejected = requests.filter((r) => r.status === "Rejected").length;
+      const pending = requests.filter((r) => r.status === "Pending").length;
 
       res.json({ total, approved, rejected, pending });
-
     } catch (err) {
       console.log(err);
       res.status(500).send("Server error");
     }
-  }
+  },
 );
 
 /* ======================================================
     ⭐ FACULTY DASHBOARD — LIST OF OD REQUESTS (Table)
 ====================================================== */
 router.get(
-  "/faculty/requests",
+  "/faculty/dashboard",
   auth,
-  roleCheck(["faculty", "hod", "admin"]),
+  roleCheck(["Faculty"]),
   async (req, res) => {
     try {
-      const dept = req.query.dept;
-
-      const list = await OD.find({ dept: dept })
+      const list = await OD.find()
         .populate("student", "name regNo dept year")
         .sort({ createdAt: -1 });
 
@@ -133,9 +130,8 @@ router.get(
       console.log(err);
       res.status(500).send("Server error");
     }
-  }
+  },
 );
-
 /* ======================================================
     ⭐ STUDENT VIEWS OWN ODs
 ====================================================== */
@@ -162,7 +158,7 @@ router.get("/student/:id", auth, async (req, res) => {
 router.post(
   "/:id/decision",
   auth,
-  roleCheck(["faculty", "hod", "admin"]),
+  roleCheck(["Faculty", "Hod", "Admin"]),
   async (req, res) => {
     const { action, remarks } = req.body;
 
@@ -176,7 +172,7 @@ router.post(
     await od.save();
 
     res.json({ msg: "Updated", od });
-  }
+  },
 );
 
 /* ======================================================
@@ -196,7 +192,19 @@ router.post(
     await od.save();
 
     res.json({ msg: "Certificate Uploaded", od });
-  }
+  },
 );
+// GET /api/requests/admin/all
+router.get("/admin/all", auth, roleCheck(["Admin"]), async (req, res) => {
+  try {
+    const list = await OD.find()
+      .populate("student", "name regNo dept year")
+      .sort({ createdAt: -1 });
 
+    res.json(list);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server error");
+  }
+});
 module.exports = router;

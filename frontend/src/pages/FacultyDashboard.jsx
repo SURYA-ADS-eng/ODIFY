@@ -1,17 +1,35 @@
 // src/pages/FacultyDashboard.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";   // <-- added for navigation
+import { useNavigate } from "react-router-dom";
 
 export default function FacultyDashboard() {
-  const navigate = useNavigate(); // <-- added navigation hook
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Departments
-  const DEPARTMENTS = ["AI&DS", "AI&ML", "BME", "CSE", "IT", "ECE", "EEE", "CIVIL", "MECH"];
+  const DEPARTMENTS = [
+    "AIDS",
+    "AIML",
+    "BME",
+    "CSE",
+    "IT",
+    "ECE",
+    "EEE",
+    "CIVIL",
+    "MECH",
+  ];
 
-  const [dept, setDept] = useState("CSE");
-  const [todayStats, setTodayStats] = useState({ approved: 0, rejected: 0, pending: 0 });
-  const [monthStats, setMonthStats] = useState({ total: 0, approved: 0, rejected: 0, pending: 0 });
+  const [dept, setDept] = useState("AIDS");
+  const [todayStats, setTodayStats] = useState({
+    approved: 0,
+    rejected: 0,
+    pending: 0,
+  });
+  const [monthStats, setMonthStats] = useState({
+    total: 0,
+    approved: 0,
+    rejected: 0,
+    pending: 0,
+  });
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +38,7 @@ export default function FacultyDashboard() {
   const [remarks, setRemarks] = useState("");
   const [search, setSearch] = useState("");
 
-  const BASE = `http://localhost:5000/api/requests`;   // backend route
+  const BASE = `http://localhost:5000/api/requests`;
 
   useEffect(() => {
     loadAll();
@@ -32,7 +50,6 @@ export default function FacultyDashboard() {
     fetchRequests();
   };
 
-  // ---------- TODAY STATS ----------
   const fetchTodayStats = async () => {
     try {
       const res = await fetch(`${BASE}/faculty/today-stats?dept=${dept}`, {
@@ -45,7 +62,6 @@ export default function FacultyDashboard() {
     }
   };
 
-  // ---------- MONTH STATS ----------
   const fetchMonthStats = async () => {
     try {
       const res = await fetch(`${BASE}/faculty/month-stats?dept=${dept}`, {
@@ -58,11 +74,11 @@ export default function FacultyDashboard() {
     }
   };
 
-  // ---------- REQUEST LIST ----------
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${BASE}/faculty/requests?dept=${dept}`, {
+      const res = await fetch(`${BASE}/faculty/dashboard`, {
+        // fixed URL
         headers: { "x-auth-token": token },
       });
       const data = await res.json();
@@ -73,7 +89,6 @@ export default function FacultyDashboard() {
     setLoading(false);
   };
 
-  // ---------- MODAL ----------
   const openModal = (req) => {
     setCurrentReq(req);
     setShowModal(true);
@@ -86,7 +101,6 @@ export default function FacultyDashboard() {
     setRemarks("");
   };
 
-  // ---------- APPROVE / REJECT ----------
   const updateStatus = async (action) => {
     try {
       await fetch(`${BASE}/${currentReq._id}/decision`, {
@@ -101,31 +115,32 @@ export default function FacultyDashboard() {
       alert(`Request ${action}`);
       closeModal();
       loadAll();
-
     } catch (err) {
       alert("Error updating request");
     }
   };
 
-  // ---------- PROOF VIEW ----------
   const viewProof = (file) => {
     if (!file) return alert("No proof uploaded");
     window.open(`http://localhost:5000/${file}`, "_blank");
   };
 
-  // ---------- SEARCH FILTER ----------
   const filtered = requests.filter((r) => {
     const s = search.toLowerCase();
     return (
-      r.student?.name?.toLowerCase().includes(s) ||
-      r.student?.regNo?.toLowerCase().includes(s) ||
+      r.studentName?.toLowerCase().includes(s) ||
+      r.regNo?.toLowerCase().includes(s) ||
       r.eventName?.toLowerCase().includes(s)
     );
   });
 
-  // ---------- STYLES ----------
   const styles = {
-    container: { padding: 20, fontFamily: "Arial", background: "#f2f4f7", minHeight: "100vh" },
+    container: {
+      padding: 20,
+      fontFamily: "Arial",
+      background: "#f2f4f7",
+      minHeight: "100vh",
+    },
     title: { fontSize: 26, fontWeight: 700, marginBottom: 10 },
     row: { display: "flex", gap: 10, marginBottom: 12, flexWrap: "wrap" },
     card: {
@@ -141,13 +156,25 @@ export default function FacultyDashboard() {
     table: { width: "100%", borderCollapse: "collapse" },
     th: { padding: 10, background: "#eaeaea", textAlign: "left" },
     td: { padding: 10, borderBottom: "1px solid #eee" },
-    btn: { padding: "6px 10px", borderRadius: 6, border: "none", cursor: "pointer" },
+    btn: {
+      padding: "6px 10px",
+      borderRadius: 6,
+      border: "none",
+      cursor: "pointer",
+    },
     approve: { background: "#27ae60", color: "#fff" },
     reject: { background: "#e74c3c", color: "#fff" },
     view: { background: "#3498db", color: "#fff" },
     modalOverlay: {
-      position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-      background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center"
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     },
     modal: { background: "white", padding: 20, borderRadius: 10, width: 450 },
   };
@@ -156,7 +183,6 @@ export default function FacultyDashboard() {
     <div style={styles.container}>
       <div style={styles.title}>Faculty Dashboard</div>
 
-      {/* 🔵 NEW BUTTON ADDED HERE */}
       <button
         style={{
           padding: "10px 20px",
@@ -171,11 +197,13 @@ export default function FacultyDashboard() {
       >
         Go to Faculty Approval Page
       </button>
-      {/* 🔵 END */}
 
-      {/* FILTERS */}
       <div style={styles.row}>
-        <select style={{ padding: 10 }} value={dept} onChange={(e) => setDept(e.target.value)}>
+        <select
+          style={{ padding: 10 }}
+          value={dept}
+          onChange={(e) => setDept(e.target.value)}
+        >
           {DEPARTMENTS.map((d) => (
             <option key={d}>{d}</option>
           ))}
@@ -193,43 +221,40 @@ export default function FacultyDashboard() {
         </button>
       </div>
 
-      {/* TODAY STATS */}
-      <div style={styles.row}>
-        <div style={styles.card}>
-          <div>Approved Today</div>
-          <div style={styles.number}>{todayStats.approved}</div>
-        </div>
-        <div style={styles.card}>
-          <div>Rejected Today</div>
-          <div style={styles.number}>{todayStats.rejected}</div>
-        </div>
-        <div style={styles.card}>
-          <div>Pending Today</div>
-          <div style={styles.number}>{todayStats.pending}</div>
-        </div>
-      </div>
+      {/* <div style={styles.row}> */}
+      {/*   <div style={styles.card}> */}
+      {/*     <div>Approved Today</div> */}
+      {/*     <div style={styles.number}>{todayStats.approved}</div> */}
+      {/*   </div> */}
+      {/*   <div style={styles.card}> */}
+      {/*     <div>Rejected Today</div> */}
+      {/*     <div style={styles.number}>{todayStats.rejected}</div> */}
+      {/*   </div> */}
+      {/*   <div style={styles.card}> */}
+      {/*     <div>Pending Today</div> */}
+      {/*     <div style={styles.number}>{todayStats.pending}</div> */}
+      {/*   </div> */}
+      {/* </div> */}
 
-      {/* MONTH STATS */}
-      <div style={styles.row}>
-        <div style={styles.card}>
-          <div>Total This Month</div>
-          <div style={styles.number}>{monthStats.total}</div>
-        </div>
-        <div style={styles.card}>
-          <div>Approved</div>
-          <div style={styles.number}>{monthStats.approved}</div>
-        </div>
-        <div style={styles.card}>
-          <div>Rejected</div>
-          <div style={styles.number}>{monthStats.rejected}</div>
-        </div>
-        <div style={styles.card}>
-          <div>Pending</div>
-          <div style={styles.number}>{monthStats.pending}</div>
-        </div>
-      </div>
+      {/* <div style={styles.row}> */}
+      {/*   <div style={styles.card}> */}
+      {/*     <div>Total This Month</div> */}
+      {/*     <div style={styles.number}>{monthStats.total}</div> */}
+      {/*   </div> */}
+      {/*   <div style={styles.card}> */}
+      {/*     <div>Approved</div> */}
+      {/*     <div style={styles.number}>{monthStats.approved}</div> */}
+      {/*   </div> */}
+      {/*   <div style={styles.card}> */}
+      {/*     <div>Rejected</div> */}
+      {/*     <div style={styles.number}>{monthStats.rejected}</div> */}
+      {/*   </div> */}
+      {/*   <div style={styles.card}> */}
+      {/*     <div>Pending</div> */}
+      {/*     <div style={styles.number}>{monthStats.pending}</div> */}
+      {/*   </div> */}
+      {/* </div> */}
 
-      {/* OD REQUEST TABLE */}
       <div style={styles.tableWrap}>
         <table style={styles.table}>
           <thead>
@@ -246,14 +271,22 @@ export default function FacultyDashboard() {
 
           <tbody>
             {loading ? (
-              <tr><td colSpan="7" style={styles.td}>Loading...</td></tr>
+              <tr>
+                <td colSpan="7" style={styles.td}>
+                  Loading...
+                </td>
+              </tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan="7" style={styles.td}>No requests found</td></tr>
+              <tr>
+                <td colSpan="7" style={styles.td}>
+                  No requests found
+                </td>
+              </tr>
             ) : (
               filtered.map((r) => (
                 <tr key={r._id}>
-                  <td style={styles.td}>{r.student?.name}</td>
-                  <td style={styles.td}>{r.student?.regNo}</td>
+                  <td style={styles.td}>{r.studentName}</td>
+                  <td style={styles.td}>{r.regNo}</td>
                   <td style={styles.td}>{r.eventName}</td>
                   <td style={styles.td}>
                     {new Date(r.startDate).toLocaleDateString()} -{" "}
@@ -283,15 +316,16 @@ export default function FacultyDashboard() {
         </table>
       </div>
 
-      {/* MODAL */}
       {showModal && (
         <div style={styles.modalOverlay}>
           <div style={styles.modal}>
             <h3>Process OD Request</h3>
-
-            <p><b>Student:</b> {currentReq.student?.name}</p>
-            <p><b>Event:</b> {currentReq.eventName}</p>
-
+            <p>
+              <b>Student:</b> {currentReq.studentName}
+            </p>
+            <p>
+              <b>Event:</b> {currentReq.eventName}
+            </p>
             <textarea
               rows="3"
               style={{ width: "100%", marginTop: 10 }}
@@ -299,7 +333,6 @@ export default function FacultyDashboard() {
               onChange={(e) => setRemarks(e.target.value)}
               placeholder="Enter remarks..."
             ></textarea>
-
             <div style={{ marginTop: 15, textAlign: "right" }}>
               <button
                 style={{ ...styles.btn, marginRight: 8 }}
@@ -307,14 +340,12 @@ export default function FacultyDashboard() {
               >
                 Cancel
               </button>
-
               <button
                 style={{ ...styles.btn, ...styles.reject, marginRight: 8 }}
                 onClick={() => updateStatus("Rejected")}
               >
                 Reject
               </button>
-
               <button
                 style={{ ...styles.btn, ...styles.approve }}
                 onClick={() => updateStatus("Approved")}

@@ -15,24 +15,21 @@ export default function Register() {
 
   const [error, setError] = useState("");
 
-  // ---------- HANDLE CHANGE LOGIC ----------
+  // ---------- HANDLE CHANGE ----------
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // ROLE CHANGE LOGIC
     if (name === "role") {
-      if (value === "admin") {
-        // Admin must NOT select dept or year
-        setForm({ ...form, role: value, dept: "", year: "" });
-      } 
-      else if (value !== "Student") {
-        // Faculty / HoD → clear year but keep dept
-        setForm({ ...form, role: value, year: "" });
-      } 
-      else {
-        // Student → normal
-        setForm({ ...form, role: value });
+      let updated = { ...form, role: value };
+
+      if (value === "Admin") {
+        updated.dept = "";
+        updated.year = "";
+        updated.regNo = "";
+      } else if (value === "Faculty" || value === "HoD") {
+        updated.year = "";
       }
+      setForm(updated);
       return;
     }
 
@@ -43,13 +40,13 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // Gmail check
+    // Gmail validation
     if (!form.email.toLowerCase().endsWith("@gmail.com")) {
       setError("Email must be a @gmail.com address");
       return;
     }
 
-    // Password match check
+    // Password match
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -57,12 +54,32 @@ export default function Register() {
 
     setError("");
 
+    // Build payload based on role
+    const payload = {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      role: form.role,
+    };
+
+    if (form.role === "Student") {
+      payload.regNo = form.regNo;
+      payload.dept = form.dept;
+      payload.year = form.year;
+    } else if (form.role === "Faculty" || form.role === "HoD") {
+      payload.dept = form.dept;
+    }
+
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      await axios.post("http://localhost:5000/api/auth/register", payload);
       alert("Registered Successfully!");
       window.location.href = "/login";
     } catch (err) {
-      alert("Registration Failed!");
+      if (err.response && err.response.data.msg) {
+        setError(err.response.data.msg);
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     }
   };
 
@@ -74,7 +91,6 @@ export default function Register() {
         {error && <p style={styles.error}>{error}</p>}
 
         <form onSubmit={handleRegister}>
-
           {/* NAME */}
           <input
             type="text"
@@ -94,6 +110,8 @@ export default function Register() {
             style={styles.input}
             value={form.regNo}
             onChange={handleChange}
+            disabled={form.role !== "Student"}
+            required={form.role === "Student"}
           />
 
           {/* DEPARTMENT */}
@@ -101,17 +119,17 @@ export default function Register() {
             name="dept"
             style={{
               ...styles.input,
-              background: form.role === "admin" ? "#dfe8f7" : "white",
-              cursor: form.role === "admin" ? "not-allowed" : "pointer",
+              background: form.role === "Admin" ? "#dfe8f7" : "white",
+              cursor: form.role === "Admin" ? "not-allowed" : "pointer",
             }}
             value={form.dept}
             onChange={handleChange}
-            disabled={form.role === "admin"}
-            required={form.role !== "admin"}   // Admin does NOT need dept
+            disabled={form.role === "Admin"}
+            required={form.role !== "Admin"}
           >
             <option value="">Select Department</option>
-            <option value="AI&DS">AI&DS</option>
-            <option value="AI&ML">AI&ML</option>
+            <option value="AIDS">AIDS</option>
+            <option value="AIML">AI&ML</option>
             <option value="CSE">CSE</option>
             <option value="ECE">ECE</option>
             <option value="EEE">EEE</option>
@@ -119,11 +137,9 @@ export default function Register() {
             <option value="BME">BME</option>
             <option value="MDE">MDE</option>
             <option value="CIVIL">CIVIL</option>
-
-
           </select>
 
-          {/* YEAR - DISABLED IF NOT STUDENT */}
+          {/* YEAR */}
           <select
             name="year"
             style={{
@@ -143,7 +159,7 @@ export default function Register() {
             <option value="4">4th Year</option>
           </select>
 
-          {/* ROLE DROPDOWN */}
+          {/* ROLE */}
           <select
             name="role"
             style={styles.input}
@@ -153,10 +169,10 @@ export default function Register() {
             <option value="Student">Student</option>
             <option value="Faculty">Faculty</option>
             <option value="HoD">HoD</option>
-            <option value="admin">Admin</option>
+            <option value="Admin">Admin</option>
           </select>
 
-          {/* GMAIL */}
+          {/* EMAIL */}
           <input
             type="email"
             name="email"
@@ -189,7 +205,7 @@ export default function Register() {
             required
           />
 
-          {/* SUBMIT BUTTON */}
+          {/* SUBMIT */}
           <button type="submit" style={styles.button}>
             Register
           </button>
@@ -206,7 +222,7 @@ export default function Register() {
   );
 }
 
-// -------------- STYLES ----------------
+// ---------------- STYLES ----------------
 
 const styles = {
   page: {
